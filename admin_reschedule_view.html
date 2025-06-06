@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Reschedule Review</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('/static/images/admin_reschedule_bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+        .table {
+            background-color: #000;
+            color: white;
+        }
+        .table th,
+        .table td {
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Pending Reschedule Requests</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-info">
+            {% for message in messages %} {{ message }} {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if requests %}
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>Matric</th>
+            <th>Requested Batch</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for r in requests %}
+        <tr>
+            <td>{{ r['matric'] }}</td>
+            <td>{{ r['requested_batch'] }}</td>
+            <td>{{ r['reason'] }}</td>
+            <td>{{ r['status'] }}</td>
+            <td>
+                <form method="post" action="/admin_reschedule_action" class="d-flex gap-2">
+                    <input type="hidden" name="id" value="{{ r['id'] }}">
+                    <input type="hidden" name="matric" value="{{ r['matric'] }}">
+                    <input type="hidden" name="batch" value="{{ r['requested_bacth'] }}">
+                    <button name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
+                    <button name="action" value="decline" class="btn btn-danger btn-sm">Decline</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-warning">No reschedule requests available.</div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="/admin" class="btn btn-secondary">Back to Admin</a>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

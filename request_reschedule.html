@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Request Batch Reschedule</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('/static/images/reschedule_request_bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        .card {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+        }
+        .btn-custom {
+            background-color: #0d6efd;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow-lg" style="width: 100%; max-width: 500px;">
+        <h3 class="text-center mb-4">Request Batch Reschedule</h3>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning">
+            {% for message in messages %} {{ message }} {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="post">
+            <div class="mb-3">
+                <label for="matric" class="form-label">Matric Number</label>
+                <input type="text" class="form-control" id="matric" name="matric" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="requested_slot" class="form-label">Requested Batch</label>
+                <select class="form-select" id="requested_slot" name="requested_slot" required>
+                    {% for i in range(A, F) %}
+                    <option value="{{ i }}">Batch {{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="reason" class="form-label">Reason for Rescheduling</label>
+                <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-custom w-100">Submit Request</button>
+        </form>
+
+        {% if reschedule_info %}
+        <div class="mt-4">
+            <h5 class="text-center">Your Reschedule Request</h5>
+            <p><strong>Requested Batch:</strong> {{ reschedule_info['requested_batch'] }}</p>
+            <p><strong>Status:</strong> {{ reschedule_info['status'] }}</p>
+            <p><strong>Submitted At:</strong> {{ reschedule_info['submitted_at'] }}</p>
+
+            {% if reschedule_info['status'] == 'Pending' %}
+            <form action="/cancel_reschedule" method="post">
+                <input type="hidden" name="matric" value="{{ reschedule_info['matric'] }}">
+                <button class="btn btn-danger w-100">Cancel Request</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="/student_login" class="btn btn-outline-light">Back to Login</a>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
